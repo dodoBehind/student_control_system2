@@ -1,0 +1,115 @@
+package mine.student_control_system2.ui;
+
+import lombok.Getter;
+
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
+
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JLayeredPane;
+import javax.swing.JPanel;
+
+public class JFrameNoBorder extends JFrame {
+
+    @Getter
+    private JLayeredPane layeredPane;
+    @Getter
+    private JPanel bgPanel, mainPanel;
+    @Getter
+    private JLabel bgLabel;
+    @Getter
+    private JButton closeButton;
+
+    public static void main(String[] args) {
+        JFrameNoBorder j = new JFrameNoBorder();
+        j.setVisible(true);
+
+    }
+
+    //    private static final long serialVersionUID = 1L;
+    //用于处理拖动事件，表示鼠标按下时的坐标，相对于JFrame
+    int xOld = 0;
+    int yOld = 0;
+
+    public JFrameNoBorder() {
+
+        //处理拖动事件
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                xOld = e.getX();
+                yOld = e.getY();
+            }
+
+        });
+        addMouseMotionListener(new MouseMotionAdapter() {
+
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                int xOnScreen = e.getXOnScreen();
+                int yOnScreen = e.getYOnScreen();
+                int xx = xOnScreen - xOld;
+                int yy = yOnScreen - yOld;
+                JFrameNoBorder.this.setLocation(xx, yy);
+            }
+        });
+
+        //JLayeredPane用于添加两个图层的，一个用于背景，一个用于界面
+        layeredPane = new JLayeredPane();
+        layeredPane.setBounds(0, 0, 1000, 500);
+
+        //背景Panel
+        bgPanel = new JPanel();
+        bgPanel.setBackground(new Color(0xFFFACD));
+        bgPanel.setBounds(0, -5, 1000, 500);
+//        layeredPane.add(bgPanel);
+
+        //背景图片，添加到背景Panel里面
+        bgLabel = new JLabel(new ImageIcon("D:\\b.png"));
+        bgPanel.add(bgLabel);
+
+
+//      ----------------------------------------
+        closeButton = new JButton();
+        closeButton.setIcon(new ImageIcon("D:\\b01.png"));
+        closeButton.setBounds(1000 - 44, 0, 45, 45);
+        closeButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.exit(0);
+            }
+        });
+
+        mainPanel = new JPanel();
+        mainPanel.setBounds(0, 0, 1000, 500);
+        mainPanel.setLayout(null);
+        mainPanel.add(closeButton);
+//      ----------------------------------------
+        layeredPane.add(bgPanel);
+        layeredPane.add(mainPanel);
+
+        setLayout(null);
+        add(layeredPane);
+        setSize(1000, 500);
+        setLocationRelativeTo(null);
+        setUndecorated(true);
+    }
+
+
+
+//
+//    @Override
+//    public void paint(Graphics g) {
+//        super.paint(g);
+//        g.setColor(new Color(0xFFFACD));
+//        g.fillRect(0, 500 - 6, 1000, 6);
+//    }
+
+}

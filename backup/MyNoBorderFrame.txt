@@ -1,0 +1,142 @@
+package mine.student_control_system2.ui;
+
+
+import lombok.Getter;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+public class MyNoBorderFrame extends MySimpleFrame {
+    private JLayeredPane layeredPane;
+    private JPanel panel;
+
+    void layeredPaneIni() {
+        layeredPane = new JLayeredPane();
+        layeredPane.setBounds(0, 0, 1000, 500);
+
+        layeredPane.setLayout(null);
+        layeredPane.add(new BackgroundPanel(0, -5, 935, 398, "F:\\b.png"));
+        layeredPane.add(new BackgroundPanel(935, -15, 45, 60, ""));
+        layeredPane.add(new BackgroundPanel(935, 35, 45, 398 - 40, "F:\\c.png"));
+
+    }
+
+    void panelIni() {
+        panel = new JPanel();
+        panel.setLayout(new GridLayout(3,1));
+        panel.setBounds(0, 390, 980, 500 - 390);
+        panel.setBackground(Color.orange);
+
+        panel.add(getP1(true));
+        panel.add(getP2(true));
+        panel.add(getP3(true));
+    }
+
+    JPanel getP1(boolean v) {
+        JPanel p1 = new JPanel();
+        p1.add(new JLabel("          "));
+        userField = new JTextField(20);
+        p1.add(userField);
+        p1.setVisible(v);
+        return p1;
+    }
+
+    JPanel getP2(boolean v) {
+        JPanel p2 = new JPanel();
+        p2.add(new JLabel( "          "));
+        passwordField = new JPasswordField(20);
+        passwordField.setEchoChar('*');
+        p2.add(passwordField);
+        p2.setVisible(v);
+        return p2;
+    }
+
+    JPanel getP3(boolean v) {
+
+        JPanel p3 = new JPanel();
+        JButton b = new JButton();
+        b.setPreferredSize(new Dimension(80,40));
+        b.setIcon(new ImageIcon("F:\\w3.png"));
+//        b.setText("登陆");
+
+        b.addActionListener(new MyLoginButtonListener());
+        p3.add(b);
+        p3.setVisible(v);
+        return p3;
+    }
+
+    public MyNoBorderFrame() {
+        super();
+
+        layeredPaneIni();
+        panelIni();
+
+        setLayout(null);
+        add(layeredPane);
+        add(panel);
+        setBounds(0, 0, 980, 510);
+        setLocationRelativeTo(null);
+        setUndecorated(true);
+        setVisible(true);
+    }
+
+    @Getter
+    private String user, password;
+    private JTextField userField;
+    private JPasswordField passwordField;
+
+    private class MyLoginButtonListener implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            user = userField.getText();
+            password = String.valueOf(passwordField.getPassword());
+
+//            DepartmentsService ds = context.getBean(DepartmentsService.class);
+//            Departments d;
+//            try {
+//                d = ds.getDepartment(Integer.parseInt(user));
+//            } catch (Exception ex) {
+//                JOptionPane.showMessageDialog(null, "查无此人,请重新登陆", "", JOptionPane.ERROR_MESSAGE);
+//                return;
+//            }
+//            mainFrame.setDepartments(d);
+//            mainFrame.setJob(d.getJob().charAt(0));
+//            mainFrame.setAdmin(d.getJob().charAt(0) == 'A' ? true : false);
+//
+//            CoursesServiceImpl cs = context.getBean(CoursesServiceImpl.class);
+//            mainFrame.setCourseALl(cs.getAllCourses());
+//            mainFrame.setCourseAllTitle(cs.getAllCoursesTitle());
+//            mainFrame.setCourseMine(cs.getMainCourses(d));
+//            mainFrame.setCourseMineTitle(cs.getMainCoursesTitle(d));
+//
+//            if (d.getJob().equals("T")) mainFrame.isTeacher();
+//            else if (d.getJob().equals("S")) mainFrame.isStudent();
+//            else mainFrame.isAdmin();
+
+            setVisible(false);
+        }
+    }
+
+    @Override
+    public void paint(Graphics g) {
+        super.paint(g);
+        g.setColor(Color.orange);
+        g.fillRect(0,390,450,500 - 300);
+        g.fillRect(529,390,980-510,500 - 300);
+        g.fillRect(450,390,80,78);
+        g.fillRect(450,500,80,78);
+        Font font=new Font("黑体",Font.BOLD,17);
+        g.setColor(Color.BLACK);
+        g.setFont(font);
+        g.drawString("用户名",360-6,410+2);
+        g.drawString("密  码",360-6,410+2+35);
+//        g.clearRect(460,470,59,20);
+    }
+
+    public static void main(String[] args) {
+        MyNoBorderFrame f = new MyNoBorderFrame();
+    }
+}

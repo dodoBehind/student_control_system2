@@ -1,0 +1,93 @@
+package mine.student_control_system2.ui;
+
+import lombok.Getter;
+import mine.student_control_system2.domain.Departments;
+import mine.student_control_system2.service.CoursesServiceImpl;
+import mine.student_control_system2.service.DepartmentsService;
+import org.springframework.context.ApplicationContext;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+public class MyLoginPanel0 extends JPanel {
+
+    @Getter
+    private String user, password;
+
+    private JTextField userField;
+    private JPasswordField passwordField;
+
+    private ApplicationContext context;
+
+    private MainFrame mainFrame;
+
+    private JButton loginButton;
+
+
+    public MyLoginPanel0(MainFrame mainFrame, ApplicationContext context) {
+//        JPanel bgPane=JFrameNoBorder.get();
+
+        this.context = context;
+        this.mainFrame = mainFrame;
+
+        setBackground(new Color(0xEEE9BF));
+        setLayout(new FlowLayout());
+
+        JLabel user = new JLabel("用户名");
+        userField = new JTextField(20);
+
+        JLabel password = new JLabel("密码");
+        passwordField = new JPasswordField(20);
+        passwordField.setEchoChar('*');
+
+        JLabel background = new JLabel();
+        background.setIcon(new ImageIcon("D:\\b.png"));
+
+        loginButton = new JButton("登陆");
+        loginButton.setMnemonic('\n');
+        loginButton.addActionListener(new MyButtonListener());
+
+        add(background);
+        add(user);
+        add(userField);
+        add(password);
+        add(passwordField);
+        add(loginButton);
+
+    }
+
+    private class MyButtonListener implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            user = userField.getText();
+            password = String.valueOf(passwordField.getPassword());
+
+            DepartmentsService ds = context.getBean(DepartmentsService.class);
+            Departments d ;
+            try {
+                d = ds.getDepartment(user);
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(null, "查无此人,请重新登陆", "", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            mainFrame.setDepartments(d);
+            mainFrame.setJob(d.getJob().charAt(0));
+            mainFrame.setAdmin(d.getJob().charAt(0)=='A'?true:false);
+
+            CoursesServiceImpl cs = context.getBean(CoursesServiceImpl.class);
+            mainFrame.setCourseALl(cs.getAllCourses());
+            mainFrame.setCourseAllTitle(cs.getAllCoursesTitle());
+            mainFrame.setCourseMine(cs.getMainCourses(d));
+            mainFrame.setCourseMineTitle(cs.getMainCoursesTitle(d));
+
+//            if (d.getJob().equals("T")) mainFrame.isTeacher();
+//            else if (d.getJob().equals("S")) mainFrame.isStudent();
+//            else mainFrame.isAdmin();
+
+            setVisible(false);
+        }
+    }
+}

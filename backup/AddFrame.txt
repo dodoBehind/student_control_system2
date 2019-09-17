@@ -1,0 +1,192 @@
+package mine.student_control_system2.ui;
+
+import mine.student_control_system2.domain.Courses;
+import mine.student_control_system2.domain.Departments;
+import mine.student_control_system2.service.CoursesService;
+import mine.student_control_system2.service.DepartmentsService;
+import org.springframework.context.ApplicationContext;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Date;
+
+public class AddFrame extends JFrame implements ActionListener {
+    private char type;
+
+    private JButton button;
+    private JButton buttonClear;
+
+    private ApplicationContext context;
+
+    private ArrayList<JLabel> labels;
+    private ArrayList<JTextField> fields;
+
+    private int notNull;
+
+    public AddFrame(char type, ApplicationContext context) {
+        this.type = type;
+        this.context = context;
+
+        labels = new ArrayList<>();
+        fields = new ArrayList<>();
+
+        setSize(400, 150);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setLocationRelativeTo(null);
+        setResizable(false);
+        setVisible(true);
+
+        setLayout(new FlowLayout());
+
+        if (type == 'D') {
+            setTitle("新建院系");
+
+            labels.add(new JLabel("输入院系编号"));
+            labels.add(new JLabel("输入院系名称"));
+
+            add(newPanel(0, "*"));
+            add(newPanel(1, "*"));
+            notNull = 2;
+
+            button = new JButton("新建院系");
+        } else if (type == 'S') {
+            setTitle("新建学生");
+            setSize(350, 200);
+
+            labels.add(new JLabel("输入院系编号"));
+            labels.add(new JLabel("输入学生编号"));
+            labels.add(new JLabel("输入学生名字"));
+            notNull = 3;
+
+            add(newPanel(0, "*"));
+            add(newPanel(1, "*"));
+            add(newPanel(2, "*"));
+
+            button = new JButton("新建学生");
+        } else if (type == 'T') {
+            setTitle("新建老师");
+            setSize(350, 200);
+
+            labels.add(new JLabel("输入院系编号"));
+            labels.add(new JLabel("输入老师编号"));
+            labels.add(new JLabel("输入老师名字"));
+            notNull = 3;
+
+            add(newPanel(0, "*"));
+            add(newPanel(1, "*"));
+            add(newPanel(2, "*"));
+
+            button = new JButton("新建老师");
+        } else if (type == 'C') {
+            setTitle("新建课程");
+            setSize(350, 300);
+
+            labels.add(new JLabel("输入院系编号"));
+            labels.add(new JLabel("输入老师编号"));
+            labels.add(new JLabel("输入课程编号"));
+            labels.add(new JLabel("输入课程名字"));
+            labels.add(new JLabel("输入学生编号"));
+            notNull = 5;
+
+            add(newPanel(0, "*"));
+            add(newPanel(1, "*"));
+            add(newPanel(2, "*"));
+            add(newPanel(3, "*"));
+            add(newPanel(4, "*"));
+
+            button = new JButton("新建课程");
+        }
+
+        buttonClear = new JButton("清除");
+        button.addActionListener(this::actionPerformed);
+        buttonClear.addActionListener(this::actionPerformed);
+        JPanel p = new JPanel();
+        p.add(button);
+        p.add(buttonClear);
+        add(p);
+
+        setVisible(true);
+    }
+
+    private JPanel newPanel(int index, String s) {
+        JPanel panel = new JPanel();
+
+        panel.add(labels.get(index));
+        JTextField field = new JTextField(20);
+        fields.add(field);
+        panel.add(field);
+        panel.add(newLable(s));
+
+        return panel;
+    }
+
+    private JLabel newLable(String s) {
+        JLabel label = new JLabel(s);
+        label.setForeground(Color.red);
+        return label;
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        String cmd = e.getActionCommand();
+        if (cmd.equals("清除")) {
+            for (JTextField f : fields) f.setText("");
+        } else {
+            for (int i = 0; i < notNull; i++) {
+                if (fields.get(i).getText().trim().length() == 0) {
+                    JOptionPane.showMessageDialog(this, "第" + (i + 1) + "行不能为空", "通知", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+            }
+
+            if (cmd.equals("新建院系")) {
+                DepartmentsService ds = context.getBean(DepartmentsService.class);
+                Departments d = new Departments();
+                d.setDid(fields.get(0).getText());
+                d.setDname(fields.get(1).getText());
+                d.setId(d.getDid());
+                d.setName(d.getDname());
+
+                d.setEnterTime(getDate());
+                d.setJob("D");
+
+                ds.createDepartment(d);
+            } else if (cmd.equals("新建老师") || cmd.equals("新建学生")) {
+                DepartmentsService ds = context.getBean(DepartmentsService.class);
+
+                Departments d = new Departments();
+
+                d.setDid(fields.get(0).getText());
+                d.setDname(ds.getDepartmentName(d.getDid()));
+                d.setId(fields.get(1).getText());
+                d.setName(fields.get(2).getText());
+
+                d.setEnterTime(getDate());
+                d.setJob(cmd.equals("新建老师") ? "T" : "S");
+
+                ds.createDepartment(d);
+            } else if (cmd.equals("新建课程")) {
+                CoursesService cs = context.getBean(CoursesService.class);
+                Courses c = new Courses();
+
+                c.setDid(fields.get(0).getText());
+                c.setTid(fields.get(1).getText());
+                c.setCid(fields.get(2).getText());
+                c.setCname(fields.get(3).getText());
+                c.setSid(fields.get(4).getText());
+                c.setGrade(0);
+                cs.createCourse(c);
+            }
+            setVisible(false);
+        }
+    }
+
+    private String  getDate(){
+        String date=new Date().toString();
+        return date.substring(date.length()-4);
+    }
+
+}

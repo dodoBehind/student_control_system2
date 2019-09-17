@@ -1,0 +1,92 @@
+package mine.student_control_system2.ui;
+
+
+import lombok.Setter;
+
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import javax.xml.ws.soap.MTOM;
+import java.awt.*;
+
+public class InfoPanel2 extends JPanel {
+    @Setter
+    private String[][] data1 = new String[][]{{"1", "a"}, {"2", "b"}}, data2 = new String[][]{{"1", "A"}, {"2", "B"}};
+    @Setter
+    private String[] title1 = new String[]{"1", "a"}, title2 = new String[]{"1", "a"};
+
+    private MyTable table1, table2;
+    private JPanel middlePanel;
+
+    void setTable(MyTable t1, MyTable t2) {
+        table1 = t1;
+        table2 = t2;
+//        table1.fire
+    }
+
+    void flushMiddle() {
+//        table1 = new MyTable(data1, title1);
+//        table2 = new MyTable(data2, title2);
+
+        middlePanel = new JPanel();
+        middlePanel.setBackground(Color.GRAY);
+        middlePanel.setLayout(new GridBagLayout());
+
+        JPanel pp1 = new JPanel();
+        pp1.setLayout(new GridLayout());
+        pp1.add(table1);
+        pp1.setBackground(Color.RED);
+
+        JPanel pp2 = new JPanel();
+        pp2.setBackground(Color.BLUE);
+        JPanel pp3 = new JPanel();
+
+        pp3.setLayout(new GridLayout());
+        pp3.add(table2);
+        pp3.setBackground(Color.BLACK);
+
+
+        middlePanel.add(pp1, new GBC(0, 0).setIpad(200, 200).setWeight(100, 100).setFill(GridBagConstraints.BOTH));
+        middlePanel.add(pp2, new GBC(1, 0).setIpad(2, 200).setWeight(30, 100).setFill(GridBagConstraints.BOTH));
+        middlePanel.add(pp3, new GBC(2, 0).setIpad(200, 200).setWeight(100, 100).setFill(GridBagConstraints.BOTH));
+
+        add(middlePanel, new GBC(1, 1).setFill(GBC.BOTH));
+    }
+
+    public InfoPanel2(MyTable t1, MyTable t2) {
+        table1 = t1;
+        table2 = t2;
+        setLayout(new GridBagLayout());
+
+        JPanel up = new JPanel();
+        up.setBackground(Color.green);
+        add(up, new GBC(0, 0, 3, 1).
+                setFill(GBC.BOTH).setIpad(200, 30).setWeight(100, 0));
+
+        JPanel left = new JPanel();
+        left.setBackground(Color.YELLOW);
+        add(left, new GBC(0, 1).
+                setFill(GBC.BOTH).setIpad(30, 90).setWeight(0, 100));
+
+        JPanel right = new JPanel();
+        right.setBackground(Color.orange);
+        add(right, new GBC(2, 1, 1, 2).
+                setFill(GBC.BOTH).setIpad(30, 90).setWeight(0, 100));
+
+        flushMiddle();
+
+        JPanel down = new JPanel();
+        down.setBackground(Color.PINK);
+        add(down, new GBC(0, 2, 2, 1).
+                setFill(GBC.BOTH).setIpad(200, 30).setWeight(100, 0));
+
+        setSize(1000, 500);
+        setVisible(true);
+    }
+
+    public static void main(String[] args) {
+        MoveFrame frame = new MoveFrame();
+//        frame.add(new InfoPanel2());
+        frame.setVisible(true);
+    }
+
+}
